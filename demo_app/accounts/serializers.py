@@ -113,7 +113,7 @@ class UserEditSerializer(serializers.ModelSerializer):
         username=data.get('username',None)
 
         if username and User.objects.filter(username=username).exists():
-            raise serializers.ValidationError(f'User already exist with the username ${username}')
+            raise serializers.ValidationError(f'User already exist with the username {username}')
         
         return data
        
@@ -132,11 +132,11 @@ class UserEditSerializer(serializers.ModelSerializer):
         return instance
     
          
-    def to_representation(self, instance):
-        res={
-            'username': instance.username,
-            'email': instance.email,
-            'full_name':f'{instance.first_name} {instance.last_name}'
-        }
-        return res
+    # def to_representation(self, instance):
+    #     res={
+    #         'username': instance.username,
+    #         'email': instance.email,
+    #         'full_name':f'{instance.first_name} {instance.last_name}'
+    #     }
+    #     return res
                

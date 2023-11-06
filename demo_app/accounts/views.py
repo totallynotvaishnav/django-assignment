@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from firebase_admin import auth
 
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserDetailSerializer, UserEditSerializer
@@ -114,6 +116,7 @@ class UserDetailView(ErrorHandlingMixin, generics.RetrieveUpdateDestroyAPIView):
 @method_decorator(FirebaseAuthenticationMiddleware, name='post') 
 class UserEditView(ErrorHandlingMixin, generics.UpdateAPIView):
     serializer_class = UserEditSerializer
+    success_url='profile-view'
     
     def get_queryset(self):
         return User.objects.get(username=self.request.user.username)
@@ -124,7 +127,6 @@ class UserEditView(ErrorHandlingMixin, generics.UpdateAPIView):
         serializer = self.get_serializer(user, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-        res_data={
-            'data':serializer.data,
-        }
-        return Response(res_data, status=status.HTTP_200_OK)
+        success_url = reverse(self.success_url)
+        return HttpResponseRedirect(success_url)
+       
